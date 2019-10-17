@@ -12,33 +12,31 @@ import org.apache.poi.openxml4j.exceptions.OpenXML4JException;
 
 public class VoiceKraft {
 
+    private final String voicekraftFile = "VK_Arlista.xlsx";
+    private final String hangtechnikaFile = "hangzavar-xlsx-export-2019-10-15_19_58_46.xlsx";
+
     private final LinkedHashMap<String, LinkedHashMap<String, ArrayList<String>>> hangzavarMap = new LinkedHashMap<>();
     private final LinkedHashMap<String, LinkedHashMap<String, ArrayList<String>>> voicekraftMap = new LinkedHashMap<>();
 
     private final LinkedHashMap<String, LinkedHashMap<String, ArrayList<String>>> toShoprenter = new LinkedHashMap<>();
-    //private final LinkedHashMap<String, String> toNetsoft = new LinkedHashMap<>();
     private final ArrayList<String> toNetsoft = new ArrayList<>();
 
-    private final String voicekraftFile = "VK_Arlista.xlsx";
-    private final String hangtechnikaFile = "hangzavar-xlsx-export-2019-10-15_19_58_46.xlsx";
+    private String firstSheetNameFromShoprenter;
+    private LinkedHashMap<String, ArrayList<String>> firstSheetFromShoprenter;
+    private String firstKeyFromfirstSheetOfShoprenter;
 
-    String firstSheetNameFromShoprenter;
-    LinkedHashMap<String, ArrayList<String>> firstSheetFromShoprenter;
-    String firstKeyFromfirstSheetOfShoprenter;
+    private String sheetNameFromVoicekraft;
+    private LinkedHashMap<String, ArrayList<String>> sheetFromVoicekraft;
+    private String firstKeyFromVoicekraft;
 
-    String sheetNameFromVoicekraft;
-    LinkedHashMap<String, ArrayList<String>> sheetFromVoicekraft;
-    String firstKeyFromVoicekraft;
-
-    String sheetNameFromResidual;
-    LinkedHashMap<String, ArrayList<String>> sheetFromResidual;
-    String firstKeyFromResidual;
-
-    Set<String> difference;
-    Set<String> residual;
+    private Set<String> difference;
+    private Set<String> residual;
 
     private int indexOfnettoArFromVoicekraft;
     private int indexOfRaktarkeszletFromVoicekraft;
+    
+    private ArrayList<ArrayList<String>> seetNamesHangtechnikaInput;
+    private ArrayList<ArrayList<String>> seetNamesVoicekraftInput;
 
     public static void main(String[] args) throws IOException, FileNotFoundException, OpenXML4JException {
 
@@ -47,13 +45,17 @@ public class VoiceKraft {
 
     private void main() throws IOException, FileNotFoundException, OpenXML4JException {
 
-        new FromXLSX().read(hangtechnikaFile, hangzavarMap);//ami megvan
-        firstSheetNameFromShoprenter = hangzavarMap.keySet().toArray()[0].toString();
+        seetNamesHangtechnikaInput = new FromXLSX().read(hangtechnikaFile, hangzavarMap);//ami megvan
+        //System.out.println("seetNamesHangtechnikaInput: " + seetNamesHangtechnikaInput.get(0) + "\n");
+        //firstSheetNameFromShoprenter = hangzavarMap.keySet().toArray()[0].toString();
+        firstSheetNameFromShoprenter = seetNamesHangtechnikaInput.get(0).get(0);
         firstSheetFromShoprenter = hangzavarMap.get(firstSheetNameFromShoprenter);
         firstKeyFromfirstSheetOfShoprenter = firstSheetFromShoprenter.keySet().toArray()[0].toString();
 
-        new FromXLSX().read(voicekraftFile, voicekraftMap);//amit kapunk
-        sheetNameFromVoicekraft = voicekraftMap.keySet().toArray()[0].toString();
+        seetNamesVoicekraftInput = new FromXLSX().read(voicekraftFile, voicekraftMap);//amit kapunk
+        //System.out.println("seetNamesVoicekraftInput: " + seetNamesVoicekraftInput.get(0) + "\n");
+        //sheetNameFromVoicekraft = voicekraftMap.keySet().toArray()[0].toString();
+        sheetNameFromVoicekraft = seetNamesVoicekraftInput.get(0).get(0);
         sheetFromVoicekraft = voicekraftMap.get(sheetNameFromVoicekraft);
         firstKeyFromVoicekraft = sheetFromVoicekraft.keySet().toArray()[0].toString();
         indexOfnettoArFromVoicekraft = sheetFromVoicekraft.get(firstKeyFromVoicekraft).indexOf("Nettó ár");
@@ -96,7 +98,7 @@ public class VoiceKraft {
         toShoprenter.get("columns").put("sku", new ArrayList<>(Arrays.asList("sku", "stockStatusName")));
         toShoprenter.get("columns").put("Cikkszám", new ArrayList<>(Arrays.asList("Cikkszám", "Nincs készleten állapot")));
         String RaktarkeszletFromVoicekraft;
-        
+
         for (String key : residual) {
             if (!key.equals(firstKeyFromVoicekraft)) {
                 RaktarkeszletFromVoicekraft = sheetFromVoicekraft.get(key).get(indexOfRaktarkeszletFromVoicekraft).

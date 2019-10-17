@@ -20,8 +20,10 @@ import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 public class FromXLSX {
 
     String sheetName;
+    String firstCellOfFirstRow;
+    ArrayList<ArrayList<String>> sheetNamesAndFirstElement = new ArrayList<>();
 
-    public void read(String xlsxName, LinkedHashMap<String, LinkedHashMap<String, ArrayList<String>>> output)
+    public ArrayList<ArrayList<String>> read(String xlsxName, LinkedHashMap<String, LinkedHashMap<String, ArrayList<String>>> output)
             throws FileNotFoundException, IOException, InvalidFormatException, OpenXML4JException {
 
         OPCPackage fis = OPCPackage.open(new FileInputStream(xlsxName));
@@ -35,38 +37,47 @@ public class FromXLSX {
         while (sheet.hasNext()) {
             sheet.next();
             sheetName = sheet.getSheetName();
+            sheetNamesAndFirstElement.add(new ArrayList<>());
+            sheetNamesAndFirstElement.add(new ArrayList<>());
+            sheetNamesAndFirstElement.get(0).add(sheetName);
             System.out.println(xlsxName + " / " + sheetName);
             output.put(sheetName, new LinkedHashMap<>());
             XSSFSheet mySheet = myWorkBook.getSheet(sheetName);
 
             int numberOfColumns = mySheet.getRow(0).getPhysicalNumberOfCells();
-            System.out.println("numberOfRows: " + mySheet.getPhysicalNumberOfRows() + "\n");
+            System.out.println("numberOfRows: " + mySheet.getPhysicalNumberOfRows());
 
+            boolean firstRow = true;
             for (Row row : mySheet) {
-                ArrayList<String> rowOfArlistaArrayList = new ArrayList<>(Collections.nCopies(numberOfColumns, null));
+                ArrayList<String> rowOfArrayList = new ArrayList<>(Collections.nCopies(numberOfColumns, null));
 
                 for (int c = 0; c < numberOfColumns; c++) {
                     Cell cell = row.getCell(c);
 
                     if (!(cell == null)) {
                         switch (cell.getCellType()) {
-                            case Cell.CELL_TYPE_STRING:
-                                rowOfArlistaArrayList.set(c, cell.getStringCellValue().trim());
+                            case STRING:
+                                rowOfArrayList.set(c, cell.getStringCellValue().trim());
                                 break;
-                            case Cell.CELL_TYPE_NUMERIC:
-                                rowOfArlistaArrayList.set(c, String.valueOf(cell.getNumericCellValue()));
+                            case NUMERIC:
+                                rowOfArrayList.set(c, String.valueOf(cell.getNumericCellValue()));
                                 break;
-                            case Cell.CELL_TYPE_BOOLEAN:
-                                rowOfArlistaArrayList.set(c, String.valueOf(cell.getBooleanCellValue()));
+                            case BOOLEAN:
+                                rowOfArrayList.set(c, String.valueOf(cell.getBooleanCellValue()));
                                 break;
                             default:
                         }
                     }
+                    if (firstRow == true && c == 0) {
+                        System.out.println("firstCellOfFirstRow: " + rowOfArrayList.get(c) + "\n");
+                        sheetNamesAndFirstElement.get(1).add(rowOfArrayList.get(c));
+                        firstRow = false;
+                    }
                 }
-                String key = rowOfArlistaArrayList.get(0).replace(".0", "");
-                output.get(sheetName).put(key, new ArrayList<>(rowOfArlistaArrayList));
+                String key = rowOfArrayList.get(0).replace(".0", "");
+                output.get(sheetName).put(key, new ArrayList<>(rowOfArrayList));
             }
         }
+        return sheetNamesAndFirstElement;
     }
 }
-
