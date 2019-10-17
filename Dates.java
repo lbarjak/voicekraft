@@ -1,4 +1,4 @@
-package eu.barjak.voicekraft;
+package residual;
 
 import java.text.SimpleDateFormat;
 import java.util.Date;

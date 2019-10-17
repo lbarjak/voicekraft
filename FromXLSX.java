@@ -1,4 +1,4 @@
-package eu.barjak.voicekraft;
+package residual;
 
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
