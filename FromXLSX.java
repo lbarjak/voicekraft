@@ -78,6 +78,7 @@ public class FromXLSX {
                 output.get(sheetName).put(key, new ArrayList<>(rowOfArrayList));
             }
         }
+        myWorkBook.close();
         return sheetNamesAndFirstElement;
     }
 }
