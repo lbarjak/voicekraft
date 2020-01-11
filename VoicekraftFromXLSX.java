@@ -30,9 +30,6 @@ public class VoicekraftFromXLSX {
 			LinkedHashMap<String, LinkedHashMap<String, ArrayList<String>>> output)
 			throws FileNotFoundException, IOException, InvalidFormatException, OpenXML4JException {
 
-		ArrayList<String> fejlec = new ArrayList<>(Arrays.asList("Termék kód", "Nettó eladási egységár",
-				"Beszerzési ár (Nettó)", "Termék típus", "Raktárkészlet"));
-
 		OPCPackage fis = OPCPackage.open(new FileInputStream(xlsxName));
 
 		XSSFWorkbook myWorkBook = new XSSFWorkbook(fis);
@@ -49,7 +46,6 @@ public class VoicekraftFromXLSX {
 			sheetNamesAndFirstElement.get(0).add(sheetName);
 			System.out.println(xlsxName + " / " + sheetName);
 			output.put(sheetName, new LinkedHashMap<>());
-			output.get(sheetName).put(fejlec.get(0), fejlec);
 			XSSFSheet mySheet = myWorkBook.getSheet(sheetName);
 
 			int numberOfColumns = mySheet.getRow(0).getPhysicalNumberOfCells();
@@ -82,18 +78,22 @@ public class VoicekraftFromXLSX {
 						firstRow = false;
 					}
 				}
-				if (rowOfArrayList.get(0) != null && rowOfArrayList.get(0).matches("\\d{2,}.+")) {
-					// "Termék kód", "Nettó eladási egységár", "Beszerzési ár (Nettó)", "Termék
-					// típus", "Raktárkészlet"
-					String key = rowOfArrayList.get(0).replace(".0", "");
-					// output.get(sheetName).put(key, new ArrayList<>(rowOfArrayList));
-					rowOfArrayList.set(0, rowOfArrayList.get(0).replace(".0", ""));//Cikkszám
-					rowOfArrayList.remove(1);// - Kategória név/nevek
-					rowOfArrayList.remove(1);// - Terméknév (hu)
-					rowOfArrayList.remove(1);// - Bruttó ár
-					rowOfArrayList.add(2, df2.format(Double.parseDouble(rowOfArrayList.get(1)) * 0.75));
-					rowOfArrayList.add(3, "Termék");
-					output.get(sheetName).put(key, new ArrayList<>(rowOfArrayList));
+//				if (rowOfArrayList.get(0) != null && rowOfArrayList.get(0).matches("\\d{2,}.+")) {
+//					// "Termék kód", "Nettó eladási egységár", "Beszerzési ár (Nettó)", "Termék
+//					// típus", "Raktárkészlet"
+//					String key = rowOfArrayList.get(0).replace(".0", "");
+//					// output.get(sheetName).put(key, new ArrayList<>(rowOfArrayList));
+//					rowOfArrayList.set(0, rowOfArrayList.get(0).replace(".0", ""));//Cikkszám
+//					rowOfArrayList.remove(1);// - Kategória név/nevek
+//					rowOfArrayList.remove(1);// - Terméknév (hu)
+//					rowOfArrayList.remove(1);// - Bruttó ár
+//					rowOfArrayList.add(2, df2.format(Double.parseDouble(rowOfArrayList.get(1)) * 0.75));
+//					rowOfArrayList.add(3, "Termék");
+//					output.get(sheetName).put(key, new ArrayList<>(rowOfArrayList));
+//				}
+				
+				if (rowOfArrayList.get(0) != null) {
+					output.get(sheetName).put(rowOfArrayList.get(0), rowOfArrayList);
 				}
 			}
 		}
