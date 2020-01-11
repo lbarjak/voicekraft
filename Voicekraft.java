@@ -11,9 +11,6 @@ import java.util.LinkedHashMap;
 import org.apache.poi.openxml4j.exceptions.InvalidFormatException;
 import org.apache.poi.openxml4j.exceptions.OpenXML4JException;
 
-//bemenet: a Voicekraft file teljes neve
-//kimenet: kapottFile
-
 public class Voicekraft {
 
 	private static DecimalFormat df2 = new DecimalFormat("#.##");
@@ -43,9 +40,9 @@ public class Voicekraft {
 			}
 		}
 
-		voiceKraftToNetsoftArfrissites();
+		//voiceKraftToNetsoftArfrissites();
 		voiceKraftToNetsoftArlista();
-		voiceKraftToShoprenterKeszlet();
+		//voiceKraftToShoprenterKeszlet();
 	}
 
 	public void voiceKraftToNetsoftArfrissites() {
@@ -53,9 +50,7 @@ public class Voicekraft {
 		for (ArrayList<String> row : out) {
 			toCSVFile.add(row.get(0) + ";" + row.get(1).replace(".", ","));
 		}
-		for (String row : toCSVFile) {
-			System.out.println(row);
-		}
+		writeToFileCSV("voicek_netsoft_arfriss_", toCSVFile);
 	}
 
 	public void voiceKraftToNetsoftArlista() {
@@ -66,9 +61,7 @@ public class Voicekraft {
 					+ ";" + row.get(2) + ";" // Beszerzési ár (Nettó)
 					+ row.get(3)); // Termék típus
 		}
-		for (String row : toCSVFile) {
-			System.out.println(row);
-		}
+		writeToFileCSV("voicek_netsoft_arlistak_", toCSVFile);
 	}
 
 	public void voiceKraftToShoprenterKeszlet() {
